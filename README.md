@@ -7,3 +7,4 @@
 - [ ] Terraform deployment
 - [ ] Frontend
 - [ ] Data purger (after X days)
+- [ ] File size limit
