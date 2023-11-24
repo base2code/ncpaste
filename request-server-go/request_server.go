@@ -1,13 +1,14 @@
-package request_server
+package request_server_go
 
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
@@ -19,6 +20,7 @@ func init() {
 
 // HelloHTTP is an HTTP Cloud Function with a request parameter.
 func RequestServer(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("RequestServer\n")
 	ctx := context.Background()
 
 	// Get the file contents from the request body
@@ -76,12 +78,17 @@ func RequestServer(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Write file\n")
 		// Create a new object and write the file contents to it
 		// Generate random string
-		randomstr, err := uuid.NewRandom()
-		if err != nil {
-			http.Error(w, "Error generating random string", http.StatusInternalServerError)
-			return
+		randomStr := GenerateRandomString(10)
+
+		for i := 0; i < 10; i++ {
+			if _, err := bucket.Object(randomStr).Attrs(ctx); err == nil {
+				randomStr = GenerateRandomString(10)
+			} else {
+				break
+			}
 		}
-		obj := bucket.Object(randomstr.String())
+
+		obj := bucket.Object(randomStr)
 		writer := obj.NewWriter(ctx)
 		_, err = writer.Write(body)
 		if err != nil {
@@ -93,10 +100,26 @@ func RequestServer(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = io.WriteString(w, randomstr.String())
+		_, err = io.WriteString(w, randomStr)
 		if err != nil {
 			http.Error(w, "Error writing string", http.StatusInternalServerError)
 			return
 		}
 	}
+}
+
+const charset = "abcdefghijklmnopqrstuvwxyz" +
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func stringWithCharset(length int, charset string) string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+func GenerateRandomString(length int) string {
+	return stringWithCharset(length, charset)
 }

@@ -72,3 +72,8 @@ node_modules/
 terraform.tfvars
 
 .idea
+
+*.zip
+terraform.tfstate
+.terraform.tfstate.lock.info
+terraform.tfstate.backup
