@@ -1,7 +1,5 @@
 # ncpaste
 
-# New project: https://github.com/base2code/ncpaste
-
 ## ToDo
 
 - [ ] Finish go request server (commenting and error handling)
