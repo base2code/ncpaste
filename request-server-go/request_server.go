@@ -109,7 +109,7 @@ func RequestServer(w http.ResponseWriter, r *http.Request) {
 }
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	"1234567890"
 
 func stringWithCharset(length int, charset string) string {
 	rand.Seed(time.Now().UnixNano())

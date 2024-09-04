@@ -12,8 +12,25 @@ router.get('/', () => {
 
 // GET collection index
 router.get('/*', async (req) => {
-	const {pathname} = new URL(req.url);
+	const url = req.url.replace("/raw", "");
+	const {pathname} = new URL(url);
 	return await fetch(`${API_URL}${pathname}`);
+});
+
+// POST with hastebin endpoint
+router.post('/documents', async (request) => {
+	const body = await request.text();
+	const code = await fetch(`${API_URL}`, {
+		method: 'POST',
+		body,
+	});
+	// the body of the response will be a JSON string. Turn it into an json return. Set the value of "key"
+	return new Response(JSON.stringify({key: await code.text()}), {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
 });
 
 // POST to the collection (we'll use async here)
