@@ -6,13 +6,13 @@ resource "google_storage_bucket" "bucket" {
 resource "google_storage_bucket_object" "archive" {
   name   = "index.zip"
   bucket = google_storage_bucket.bucket.name
-  source = "function.zip"
+  source = "function1.zip"
 }
 
 resource "google_cloudfunctions_function" "function" {
   name        = "ncpaste-func"
   description = "NCPaste Handler"
-  runtime     = "go119"
+  runtime     = "go120"
 
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.bucket.name

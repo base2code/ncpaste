@@ -6,8 +6,10 @@ const API_URL = 'https://europe-west3-ncpaste.cloudfunctions.net/ncpaste-func';
 const router = Router();
 
 // GET item
-router.get('/', () => {
-	return new Response('INDEX');
+router.get('/', async (req) => {
+	const url = req.url;
+	const {pathname} = new URL(url);
+	return await fetch(`${API_URL}`);
 });
 
 // GET collection index

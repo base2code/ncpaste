@@ -45,11 +45,18 @@ func RequestServer(w http.ResponseWriter, r *http.Request) {
 	if len(body) == 0 && path == "/" {
 		fmt.Printf("Show index.html\n")
 		// Show index.html
-		_, err := fmt.Fprint(w, "Hello, World!\n")
+		obj := bucket.Object("index.html")
+		reader, err := obj.NewReader(ctx)
 		if err != nil {
-			http.Error(w, "Error writing string", http.StatusInternalServerError)
+			http.Error(w, "Error reading file from bucket", http.StatusInternalServerError)
 			return
 		}
+		body = make([]byte, 0)
+		data, err := ioutil.ReadAll(reader)
+		w.Write(data)
+		w.Header().Set("Content-Type", "text/html")
+		// return 200
+
 	} else if len(body) == 0 && path != "/" {
 		// Show file
 		fmt.Printf("Show file\n")
